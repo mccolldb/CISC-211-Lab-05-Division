@@ -65,8 +65,50 @@ asmFunc:
      * Use it to test the C test code */
     
     /*** STUDENTS: Place your code BELOW this line!!! **************/
-
+    /* initialize output state */
+    LDR R2,=dividend
+    STR R0,[R2]  // save R0=numerator into dividend output
+    LDR R2,=divisor
+    STR R1,[R2]  // save R1=denominator into divisor output
+    MOV R3,0     // initial value
+    LDR R2,=we_have_a_problem
+    STR R3,[R2]  // save 0 into we_have_a_problem output
+    LDR R2,=quotient
+    STR R3,[R2]  // save 0 into quotient output
+    LDR R2,=mod
+    STR R3,[R2]  // save 0 into mod output
     
+    /* check inputs for zeros */
+    CMP R0,0        // numerator
+    BEQ problem     // (Z=1) divisor == 0 => problem
+    CMP R1,0        // divisor
+    BEQ problem     // (Z=1) divisor == 0 => problem
+    
+    /* loop, taking away denom(R1) from numer(R0) util numer < denom */
+    MOV R3,0        // initialise quotient counter = R3
+ loop_check:
+    CMP R0,R1        // is numer(R0) < denom(R1) ? & set flags
+    BLO loop_exit    // *unsigned* lower
+    SUB R0,R1        // subtract denom from numer 
+    ADD R3,R3,1      // increment quotient counter
+    B   loop_check
+ loop_exit:
+    
+    /* save results */
+    LDR R2,=quotient
+    STR R3,[R2]   // save R3 result to quotient
+    LDR R2,=mod
+    STR R0,[R2]   // save R0 result to mod
+    B   set_return
+
+problem:
+    MOV R3,1        // error value
+    LDR R2,=we_have_a_problem
+    STR R3,[R2]     // save into we_have_a_problem
+    /* drop thru */
+    
+set_return:
+    LDR R0,=quotient   // function return value (address of quotient)
     /*** STUDENTS: Place your code ABOVE this line!!! **************/
 
 done:    

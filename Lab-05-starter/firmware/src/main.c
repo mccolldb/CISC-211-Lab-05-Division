@@ -327,8 +327,6 @@ int main ( void )
     int32_t failCount = 0;
     int32_t totalPassCount = 0;
     int32_t totalFailCount = 0;
-    // int32_t x1 = sizeof(tc);
-    // int32_t x2 = sizeof(tc[0]);
     uint32_t numTestCases = sizeof(tc)/sizeof(tc[0]);
     
     // Loop forever
@@ -337,9 +335,6 @@ int main ( void )
         // Do the tests
         for (int testCase = 0; testCase < numTestCases; ++testCase)
         {
-            // Toggle the LED to show we're running a new test case
-            LED0_Toggle();
-
             // reset the state variables for the timer and serial port funcs
             isRTCExpired = false;
             isUSARTTxComplete = false;
@@ -349,10 +344,9 @@ int main ( void )
             we_have_a_problem = 0XD000000D;
 
             
-            // set the dividend in r0
-            uint32_t myDividend = tc[testCase][0];
-            // set the divisor in r1
-            uint32_t myDivisor  = tc[testCase][1];
+            
+            uint32_t myDividend = tc[testCase][0]; // set the dividend in r0
+            uint32_t myDivisor  = tc[testCase][1];  // set the divisor in r1
 
             // STUDENTS:
             // !!!! THIS IS WHERE YOUR ASSEMBLY LANGUAGE PROGRAM GETS CALLED!!!!
@@ -360,8 +354,7 @@ int main ( void )
             uint32_t quotAddr = asmFunc(myDividend, myDivisor);
             
             // test the result and see if it passed
-            failCount = testResult(testCase,quotAddr,
-                                   &passCount,&failCount);
+            failCount = testResult(testCase,quotAddr,&passCount,&failCount);
             totalPassCount = totalPassCount + passCount;
             totalFailCount = totalFailCount + failCount;
 
@@ -412,7 +405,7 @@ int main ( void )
 
             // STUDENTS:
             // UNCOMMENT THE NEXT LINE IF YOU WANT YOUR CODE TO STOP AFTER THE LAST TEST CASE!
-            // exit(0);
+            exit(0);
             
             // slow down the blink rate after the tests have been executed
             if (firstTime == true)
